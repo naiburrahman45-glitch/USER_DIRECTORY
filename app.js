@@ -1,30 +1,41 @@
-let allusers = [];
+let allUsers = [];
 
 async function loadUsers() {
-    try{
-        const res = await fetch("https://jsonplaceholder.typicode.com/users");
-        allusers = await res.json();
-        WebGL2RenderingContext(allusers);
-
-    }
-    catch(err){
-        console.error(err);
-        document.getElementById("users").innerHTML = "ERROR !"
-
-    }
-    
+  try {
+    const res  = await fetch("https://jsonplaceholder.typicode.com/users");
+    allUsers   = await res.json();
+    render(allUsers);
+  } catch (err) {
+    console.error(err);
+    document.getElementById("users").innerHTML = "Error!";
+  }
 }
 
-function rander(users){
-    const container = document.getElementById("users");
+function render(users) {
+  const container = document.getElementById("users");
 
-    container.innerHTML = users
-
+  container.innerHTML = users
     .map(
-        (u) => 
-            <div class="card">
-                
-            </div>
-            
+      (u) => `
+      <div class="card">
+        <h3>${u.name}</h3>
+        <p>📧 ${u.email}</p>
+        <p>📞 ${u.phone}</p>
+        <p>🏙️ ${u.address.city}</p>
+        <p>🌐 ${u.website}</p>
+      </div>
+      `
     )
+    .join("");
 }
+
+// Search
+document.getElementById("search").addEventListener("input", (e) => {
+  const q = e.target.value.toLowerCase();
+  const filtered = allUsers.filter((u) =>
+    u.name.toLowerCase().includes(q)
+  );
+  render(filtered);
+});
+
+loadUsers();
